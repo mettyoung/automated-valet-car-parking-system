@@ -1,0 +1,83 @@
+@startuml
+abstract class Vehicle {
+    + getPlateNumber(): String
+    + {abstract} getHourlyParkingRate(): HourlyHourlyParkingRate
+}
+
+class Car {
+    + getHourlyParkingRate(): HourlyParkingRate
+}
+
+class Motorcycle {
+    + getHourlyParkingRate(): HourlyParkingRate
+}
+
+class HourlyParkingRate {
+    __
+    + getPricePerHour(): Integer
+    ..Comments..
+    Hardcoding price rate as hourly to keep things simple.
+}
+
+class ParkingSpace {
+    - Map<VehicleType, Heap<ParkingLot>> vacantLots
+    - Map<Vehicle, ParkingReservation> reservations
+    __
+    + constructor(List<VehicleLots> vehicleLots)
+    + accept(Vehicle vehicle, Timestamp timestamp): ParkingReservation|null
+    + release(Vehicle vehicle, Timestamp timestamp): ParkingReceipt|null
+    .. Comments ..
+    In order to dequeue the lowest available parking slot, we use min
+    heap to achieve O(log*n) for reserving a slot.
+
+    Then we use hash table to get the available parking lots per vehicle
+    at runtime of O(1). This still effectively gives us a runtime of O(log*n).
+
+    We use hash table for releasing parking lots as well. This gives us O(1).
+
+    We also use a list of vehicleLots instead of hardcoding Integer parameters in
+    the constructor to give us more flexibility should we add another vehicle type.
+}
+
+class VehicleLots {
+    + getVehicleType(): Class<T super Vehicle>
+    + getNumberOfLots(): Integer
+}
+
+class ParkingLot {
+    + getName(): String
+    + getVehicle(): Vehicle
+}
+
+class ParkingReceipt {
+    + getParkingReservation(): ParkingReservation
+    + getExitDateTime(): LocalDateTime
+    + getParkingFee(): ParkingFee
+}
+
+class ParkingReservation {
+    + getEntryDateTime(): LocalDateTime
+    + getParkingLot(): ParkingLot
+}
+
+class ParkingFee {
+    + getPrice(): Decimal
+}
+
+Vehicle <|-- Car
+Vehicle <|-- Motorcycle
+Vehicle -- HourlyParkingRate: uses >
+ParkingSpace-- VehicleLots: for initialization >
+ParkingSpace -- Vehicle: accepts/releases >
+ParkingSpace -- ParkingReservation: provides >
+ParkingReservation *-- ParkingLot
+ParkingReceipt *-- ParkingReservation
+ParkingSpace -- ParkingReceipt: prints >
+ParkingReceipt *-- ParkingFee
+
+note "For now, this is currency-less. These value objects can be extended to support multi-currency as needed." as currencyNote
+
+HourlyParkingRate .. currencyNote
+ParkingFee .. currencyNote
+
+@enduml

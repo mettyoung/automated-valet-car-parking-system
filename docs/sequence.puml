@@ -1,0 +1,60 @@
+@startuml
+
+actor user
+boundary ConsoleApplication
+boundary Interpreter
+boundary Files
+boundary InitCommandInterpreter
+boundary VehicleSlots
+boundary EnterVehicleCommandInterpreter
+boundary EnterVehicleCommand
+boundary ExitVehicleCommandInterpreter
+boundary ExitVehicleCommand
+boundary DefaultInterpreter
+boundary ParkingSpace
+boundary Vehicle
+boundary ApplicationContext
+
+user -> ConsoleApplication: executes
+ConsoleApplication -> Interpreter: creates a chain of interpreters of \ninit, enter, exit and default interpreters
+ConsoleApplication -> Files: read input file
+group for each line
+    ConsoleApplication -> Interpreter: call the chain of interpreters
+end
+
+... InitCommandInterpreter is invoked ...
+
+InitCommandInterpreter -> VehicleSlots: Create vehicle slots from input
+InitCommandInterpreter -> ParkingSpace: Creates a new parking space
+InitCommandInterpreter -> ApplicationContext: Registers parking space
+alt on failure
+    InitCommandInterpreter --> user: Shows failure message
+end
+
+... EnterVehicleCommandInterpreter is invoked ...
+
+EnterVehicleCommandInterpreter -> Vehicle: Creates vehicle accordingly from input
+EnterVehicleCommandInterpreter -> ApplicationContext: Gets parking space
+EnterVehicleCommandInterpreter -> ParkingSpace: Creates EnterVehicleCommand with success and failure handlers
+EnterVehicleCommandInterpreter -> EnterVehicleCommand: execute
+EnterVehicleCommand --> user: Shows success message
+alt on failure
+    EnterVehicleCommand --> user: Shows failure message
+end
+
+... ExitVehicleCommandInterpreter is invoked ...
+
+ExitVehicleCommandInterpreter -> Vehicle: Creates vehicle accordingly from input
+ExitVehicleCommandInterpreter -> ApplicationContext: Gets parking space
+ExitVehicleCommandInterpreter -> ParkingSpace: Creates ExitVehicleCommand with success and failure handlers
+ExitVehicleCommandInterpreter -> ExitVehicleCommand: execute
+ExitVehicleCommand --> user: Shows success message
+alt on failure
+    ExitVehicleCommand --> user: Shows failure message
+end
+
+... DefaultInterpreter is invoked ...
+
+DefaultInterpreter --> user: Show default message
+
+@enduml
