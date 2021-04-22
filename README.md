@@ -1,7 +1,62 @@
 Automated Valet Car Parking System
 ========================
+This application automates a car parking system which provides park rentals for vehicles and manages its revenue.
 
-This application wishes to automate a car parking system that will accept vehicles and manage its revenue. 
+Each vehicle upon entry can only park in a lot available for that vehicle type. If there are no lots available for that
+vehicle type, it should be denied an entry into the space. 
+
+All of the lots are distinctly numbered (eg: CarLot1, CarLot2,...,MotorcycleLot1, MotorcycleLot2,...).
+
+Each vehicle upon entering is alloted to the lot with the lowest number for that vehicle type (eg: a car entering a
+parking space with the available lots CarLot2, CarLot4, CarLot5 would be assigned to CarLot2).
+
+When a vehicle wants to exit the car park, the system will release the parking lot which the vehicle rented and charge 
+them an appropriate parking fee (rounded up to the nearest hour).
+
+### Implementation
+This will be implemented as a console application where it will accept an input file as an argument. The format of the file
+is described below:
+
+```
+Init motorcycle 3 
+Init car 4
+Enter motorcycle SGX1234A 1613541902 
+Enter car SGF9283P 1613541902
+Exit SGX1234A ​1613545602
+Enter car SGP2937F 1613546029
+Enter car SDW2111W 1613549730
+Enter car SSD9281L 1613549740
+Exit SDW2111W 1613559745
+```
+
+The first two lines initializes a parking space with the indicated number of parking slots for the particular vehicle type.
+
+For each subsequent line, there would be two types of events:
+
+- **Vehicle entering the space: Enter \<motorcycle\|car> \<vehicle number> \<timestamp>**
+
+The program should print out either *accept* or *reject* based on the lot availability. If the vehicle is accepted,
+the program should also return the name of the lot being occupied by it.
+
+- **Vehicle exiting the space: Exit \<vehicle number> \<timestamp>**
+
+The program prints out the released lot and the parking fee.
+
+Given the example above, the program output would look like:
+
+```
+Accept MotorcycleLot1 
+Accept CarLot1 
+MotorcycleLot1 2 
+Accept CarLot2 
+Accept CarLot3 
+Reject
+CarLot3 6
+```
+
+### Scope and Limitations
+- The parking system will not keep track of the revenue generated but only calculates the parking fee upon vehicle exiting.
+- Vehicle types are hardcoded and limited to only Car and Motorcycle with hourly rate of $2 and $1 respectively.
 
 ### Architecture
 #### C3 - Component Level
@@ -19,54 +74,9 @@ This application wishes to automate a car parking system that will accept vehicl
 #### Time Sequence Diagram
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-sequence.puml)
 
-### Specification
-This application ships with a default vehicle mapping 
-
-
-
-Given a gigantic railway network with multiple junction stations, this application wishes to provide a facility to 
-suggest routes for the bewildered traveller. Feel free to use this app in your smart phone.
-
-### Specification 
-This application ships with a default station map of the Republic of Singapore. Hence, the basic front-end facility is 
-crafted specifically for it. It is also capable of creating a new virtual railway network given a different station map
-defined in a CSV file. Please take note the following steps depicts how the Railway Factory construct the virtual
-railway network:
-
-  1. The CSV file adheres to the following format and creates a list of stations containing the following fields:
-
-    Station Code,Station Name,Opening Date
-    NS1,Jurong East,10 March 1990
-    NS2,Bukit Batok,10 March 1990
-    NS3,Bukit Gombak,10 March 1990
-    
-  2. The station code strictly adheres two capital letters followed by any number of numerical digits.
-  3. The factory sorts the list of stations by station code in alphabetical and numerical order respectively.
-  4. The factory creates connections in sequential order.
-  5. The factory creates connections if their station names are equal (i.e. they are junction stations).
-
-In the course of computing suggested routes, closed stations are not traversed. 
-Please refer to the [station map](https://github.com/mettyoung/railway-routing-service/blob/master/backend/src/main/resources/StationMap.csv)
-to determine which stations are closed.
-
-Aside from providing a front-end facility, you may also access the REST API endpoint for route suggestion request:
-
-    curl "http://li1123-50.members.linode.com/railway-routing-service/compute-path?origin=Holland%20Village&target=Bugis"
-    # For a more human readable response
-    curl "http://li1123-50.members.linode.com/railway-routing-service/compute-path?origin=Holland%20Village&target=Bugis" -H 'Accept: text/plain'
-
-The suggested routes are ordered by the number of stations travelled in ascending order. It also suggests if you
-need to change lines. 
-
 ### Deployment Instructions
 Please refer to the [deployment guide](https://github.com/mettyoung/railway-routing-service/blob/master/devops/deployment_guide.md)
 for further instructions.
-
-### Importing a different CSV station map
-To import a different CSV station map to an existing containerized web application, please modify the "RAILWAY_CSVPATH"
-property in the docker-compose.yml found in the web server and just execute "docker-compose up -d" to recreate the
-container with a new station map. Please follow the CSV format strictly as the application will fail to boot if the
-parser deems the CSV file unreadable.
 
 ### The Journey
 
@@ -103,6 +113,6 @@ Furthermore, I have listed all the technologies that I've used in this project.
 4. Ansible
 
 ### Copyright
-Copyright © 2019, Emmett Young, All rights reserved.
+Copyright © 2021, Emmett Young, All rights reserved.
 
 No reproduction and usage are allowed in whole or in part for distribution, personal and commercial purposes.

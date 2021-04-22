@@ -25,9 +25,13 @@ end
 
 ... InitCommandInterpreter is invoked ...
 
-InitCommandInterpreter -> VehicleSlots: Create vehicle slots from input
-InitCommandInterpreter -> ParkingSpace: Creates a new parking space
-InitCommandInterpreter -> ApplicationContext: Registers parking space
+InitCommandInterpreter -> VehicleSlots: creates vehicle slots from input
+InitCommandInterpreter -> ApplicationContext: gets parking space
+alt not found
+    InitCommandInterpreter -> ParkingSpace: creates a new parking space
+    InitCommandInterpreter -> ApplicationContext: registers parking space
+end
+InitCommandInterpreter -> ParkingSpace: Allocate vehicle slots
 alt on failure
     InitCommandInterpreter --> user: Shows failure message
 end

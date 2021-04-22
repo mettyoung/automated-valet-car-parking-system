@@ -17,7 +17,7 @@ class ParkingSpace {
     - vacantLots: Map<VehicleType, Heap<ParkingLot>>
     - reservations: Map<Vehicle, ParkingReservation>
     __
-    + constructor(List<VehicleLots> vehicleLots)
+    + allocate(VehicleLots vehicleLots)
     + accept(Vehicle vehicle, Timestamp timestamp): ParkingReservation|null
     + release(Vehicle vehicle, Timestamp timestamp): ParkingReceipt|null
     .. Comments ..
