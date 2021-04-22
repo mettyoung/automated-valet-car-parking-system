@@ -14,6 +14,7 @@ boundary DefaultInterpreter
 boundary ParkingSpace
 boundary Vehicle
 boundary ApplicationContext
+boundary VehicleTypeRepository
 
 user -> ConsoleApplication: executes
 ConsoleApplication -> Interpreter: creates a chain of interpreters of \ninit, enter, exit and default interpreters
@@ -33,6 +34,7 @@ end
 
 ... EnterVehicleCommandInterpreter is invoked ...
 
+EnterVehicleCommandInterpreter -> VehicleTypeRepository: Fetch vehicle type from input
 EnterVehicleCommandInterpreter -> Vehicle: Creates vehicle accordingly from input
 EnterVehicleCommandInterpreter -> ApplicationContext: Gets parking space
 EnterVehicleCommandInterpreter -> ParkingSpace: Creates EnterVehicleCommand with success and failure handlers
@@ -44,6 +46,7 @@ end
 
 ... ExitVehicleCommandInterpreter is invoked ...
 
+ExitVehicleCommandInterpreter -> VehicleTypeRepository: Fetch vehicle type from input
 ExitVehicleCommandInterpreter -> Vehicle: Creates vehicle accordingly from input
 ExitVehicleCommandInterpreter -> ApplicationContext: Gets parking space
 ExitVehicleCommandInterpreter -> ParkingSpace: Creates ExitVehicleCommand with success and failure handlers

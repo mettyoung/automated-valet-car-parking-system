@@ -1,0 +1,35 @@
+@startuml
+
+class ConsoleApplication
+
+interface Interpreter {
+    + supports(String line)
+    + interpret(String line)
+}
+
+class ConsoleInputInterpreter {
+    - interpreters: List<Interpreter>
+    + interpret(String line)
+}
+
+enum ApplicationContext {
+    + {static} INSTANCE: ApplicationContext
+    + register(Class type, Object bean)
+    + getBean(Class type): Object
+}
+
+class InitCommandInterpreter
+class EnterVehicleCommandInterpreter
+class ExitVehicleCommandInterpreter
+
+Interpreter <|-- InitCommandInterpreter
+Interpreter <|-- EnterVehicleCommandInterpreter
+Interpreter <|-- ExitVehicleCommandInterpreter
+ConsoleInputInterpreter *-- Interpreter
+InitCommandInterpreter -- ApplicationContext: registers parking space >
+EnterVehicleCommandInterpreter -- ApplicationContext: gets parking space >
+ExitVehicleCommandInterpreter -- ApplicationContext: gets parking space >
+
+ConsoleApplication -- ConsoleInputInterpreter: uses >
+
+@enduml

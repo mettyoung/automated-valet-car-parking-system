@@ -1,27 +1,21 @@
 @startuml
-abstract class Vehicle {
+class Vehicle {
     + getPlateNumber(): String
-    + {abstract} getHourlyParkingRate(): HourlyHourlyParkingRate
+    + getVehicleType(): VehicleType
 }
 
-class Car {
-    + getHourlyParkingRate(): HourlyParkingRate
+entity VehicleType {
+    + name: String
+    + hourlyParkingRate: Decimal
 }
 
-class Motorcycle {
-    + getHourlyParkingRate(): HourlyParkingRate
-}
-
-class HourlyParkingRate {
-    __
-    + getPricePerHour(): Integer
-    ..Comments..
-    Hardcoding price rate as hourly to keep things simple.
+interface VehicleTypeRepository {
+    + findByName(): Optional<VehicleType>
 }
 
 class ParkingSpace {
-    - Map<VehicleType, Heap<ParkingLot>> vacantLots
-    - Map<Vehicle, ParkingReservation> reservations
+    - vacantLots: Map<VehicleType, Heap<ParkingLot>>
+    - reservations: Map<Vehicle, ParkingReservation>
     __
     + constructor(List<VehicleLots> vehicleLots)
     + accept(Vehicle vehicle, Timestamp timestamp): ParkingReservation|null
@@ -40,44 +34,36 @@ class ParkingSpace {
 }
 
 class VehicleLots {
-    + getVehicleType(): Class<T super Vehicle>
+    + getVehicleType(): VehicleType
     + getNumberOfLots(): Integer
 }
 
 class ParkingLot {
     + getName(): String
-    + getVehicle(): Vehicle
 }
 
 class ParkingReceipt {
     + getParkingReservation(): ParkingReservation
     + getExitDateTime(): LocalDateTime
-    + getParkingFee(): ParkingFee
+    + getParkingFee(): Decimal
 }
 
 class ParkingReservation {
     + getEntryDateTime(): LocalDateTime
     + getParkingLot(): ParkingLot
+    + getVehicle(): Vehicle
 }
 
-class ParkingFee {
-    + getPrice(): Decimal
-}
-
-Vehicle <|-- Car
-Vehicle <|-- Motorcycle
-Vehicle -- HourlyParkingRate: uses >
-ParkingSpace-- VehicleLots: for initialization >
+Vehicle *-- VehicleType
+VehicleLots *-- VehicleType
+VehicleTypeRepository -- VehicleType: provides >
+ParkingSpace *-- VehicleType
+ParkingSpace *-- ParkingLot: Has >
+ParkingSpace -- VehicleLots: for initialization >
 ParkingSpace -- Vehicle: accepts/releases >
 ParkingSpace -- ParkingReservation: provides >
 ParkingReservation *-- ParkingLot
 ParkingReceipt *-- ParkingReservation
 ParkingSpace -- ParkingReceipt: prints >
-ParkingReceipt *-- ParkingFee
-
-note "For now, this is currency-less. These value objects can be extended to support multi-currency as needed." as currencyNote
-
-HourlyParkingRate .. currencyNote
-ParkingFee .. currencyNote
 
 @enduml

@@ -1,0 +1,32 @@
+@startuml
+
+package Application {
+    package Domain {
+        [VehicleTypeRepository]
+    }
+}
+
+package Persistence {
+    [InMemoryVehicleTypeRepository]
+    [JpaVehicleTypeRepository]
+}
+
+package Presentation {
+    component ConsoleUI
+    component RestUI
+    component MvcUI
+}
+
+InMemoryVehicleTypeRepository -up-> VehicleTypeRepository: implements
+JpaVehicleTypeRepository .up.> VehicleTypeRepository: implements
+ConsoleUI --> Application
+RestUI ..> Application
+MvcUI ..> Application
+
+Note "REST and MVC controllers can be easily plugged as adapters to the application core." as uiNote
+uiNote .. RestUI
+uiNote .. MvcUI
+Note left of InMemoryVehicleTypeRepository: Hardcodes motorcycle and\ncar as only vehicle types.
+Note right of JpaVehicleTypeRepository: Can easily plug database\nwithout impacting application\ncore to support more vehicle\ntypes dynamically.
+
+@enduml

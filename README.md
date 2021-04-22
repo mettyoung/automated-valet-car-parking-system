@@ -3,14 +3,21 @@ Automated Valet Car Parking System
 
 This application wishes to automate a car parking system that will accept vehicles and manage its revenue. 
 
-### C4 Model
-### Domain Model
-### Application Architecture
+### Architecture
+#### C3 - Component Level
+![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c3-component.puml)
 
-### Application Core Design 
+#### C4 - Domain
+![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-domain.puml)
 
+#### C4 - Application
+![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-application.puml)
 
+#### C4 - Presentation
+![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-presentation.puml)
 
+#### Time Sequence Diagram
+![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-sequence.puml)
 
 ### Specification
 This application ships with a default vehicle mapping 
