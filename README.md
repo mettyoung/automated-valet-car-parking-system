@@ -93,11 +93,36 @@ By doing so, we can just modify the vehicle types in the database without recomp
 #### C4 - Domain
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-domain.puml)
 
+This layer defines the business logic for the parking system using object-oriented approach. 
+
+*ParkingSpace* accepts *VehicleLots* to dynamically allocate parking lots per vehicle type. *VehicleTypeRepository* 
+enables adding more vehicle types without modifying the domain model.
+
+The rest are self-explanatory.
+  
 #### C4 - Application
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-application.puml)
 
+We define two use cases - enter and exit vehicle. These commands delegate success and failure handlers
+to the presentation layer. This enables the presentation layer to properly define its display logic according to its medium.
+
+*ParkingSpace* is designed to be injectable which enables these commands to work with multiple parking spaces.
+But it will depend on the presentation layer if it will support single or multiple parking spaces. 
+
 #### C4 - Presentation
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-presentation.puml)
+
+We use [Chain of Responsibility](https://refactoring.guru/design-patterns/chain-of-responsibility) pattern to create the *ConsoleInputInterpreter*. 
+It can accept multiple interpreters where the appropriate interpreter will read a line from STDIN and execute the corresponding application command.
+
+If we want to support more commands, we can just create a new interpreter and add it to the *ConsoleInputInterpreter*. This follows the 
+[Open-Closed Principle](https://stackify.com/solid-design-open-closed-principle/) from SOLID design principles.
+
+Since the ConsoleUI is only meant for being a prototype, it has been designed under the following assumptions:
+
+- Vehicle types are defined during compile time. This means it will not support *JpaVehicleTypeRepository* out of the box.
+- Only one parking space will be used - which is accomplished by [Registry](https://martinfowler.com/eaaCatalog/registry.html)
+and [Singleton](https://refactoring.guru/design-patterns/singleton) patterns.
 
 #### Time Sequence Diagram
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-sequence.puml)
