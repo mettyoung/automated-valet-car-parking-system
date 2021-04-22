@@ -124,6 +124,8 @@ Since the ConsoleUI is only meant for being a prototype, it has been designed un
 - Only one parking space will be used - which is accomplished by [Registry](https://martinfowler.com/eaaCatalog/registry.html)
 and [Singleton](https://refactoring.guru/design-patterns/singleton) patterns.
 
+*DefaultInterpreter* will be invoked if the input command from STDIN is not recognized.
+
 #### Time Sequence Diagram
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-sequence.puml)
 

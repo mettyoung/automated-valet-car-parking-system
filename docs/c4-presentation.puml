@@ -21,10 +21,12 @@ enum ApplicationContext {
 class InitCommandInterpreter
 class EnterVehicleCommandInterpreter
 class ExitVehicleCommandInterpreter
+class DefaultInterpreter
 
 Interpreter <|-- InitCommandInterpreter
 Interpreter <|-- EnterVehicleCommandInterpreter
 Interpreter <|-- ExitVehicleCommandInterpreter
+Interpreter <|-- DefaultInterpreter
 ConsoleInputInterpreter *-- Interpreter
 InitCommandInterpreter -- ApplicationContext: registers parking space >
 EnterVehicleCommandInterpreter -- ApplicationContext: gets parking space >

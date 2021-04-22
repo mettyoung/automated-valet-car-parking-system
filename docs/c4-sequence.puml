@@ -2,7 +2,7 @@
 
 actor user
 boundary ConsoleApplication
-boundary Interpreter
+boundary ConsoleInputInterpreter
 boundary Files
 boundary InitCommandInterpreter
 boundary VehicleSlots
@@ -17,10 +17,10 @@ boundary ApplicationContext
 boundary VehicleTypeRepository
 
 user -> ConsoleApplication: executes
-ConsoleApplication -> Interpreter: creates a chain of interpreters of \ninit, enter, exit and default interpreters
+ConsoleApplication -> ConsoleInputInterpreter: creates a chain of interpreters of \ninit, enter, exit and default interpreters
 ConsoleApplication -> Files: read input file
 group for each line
-    ConsoleApplication -> Interpreter: call the chain of interpreters
+    ConsoleApplication -> ConsoleInputInterpreter: call the
 end
 
 ... InitCommandInterpreter is invoked ...
@@ -38,10 +38,10 @@ end
 
 ... EnterVehicleCommandInterpreter is invoked ...
 
-EnterVehicleCommandInterpreter -> VehicleTypeRepository: Fetch vehicle type from input
-EnterVehicleCommandInterpreter -> Vehicle: Creates vehicle accordingly from input
-EnterVehicleCommandInterpreter -> ApplicationContext: Gets parking space
-EnterVehicleCommandInterpreter -> ParkingSpace: Creates EnterVehicleCommand with success and failure handlers
+EnterVehicleCommandInterpreter -> VehicleTypeRepository: fetches vehicle type given input
+EnterVehicleCommandInterpreter -> Vehicle: creates vehicle given input
+EnterVehicleCommandInterpreter -> ApplicationContext: gets parking space
+EnterVehicleCommandInterpreter -> EnterVehicleCommand: creates EnterVehicleCommand with success and failure handlers
 EnterVehicleCommandInterpreter -> EnterVehicleCommand: execute
 EnterVehicleCommand --> user: Shows success message
 alt on failure
@@ -50,10 +50,10 @@ end
 
 ... ExitVehicleCommandInterpreter is invoked ...
 
-ExitVehicleCommandInterpreter -> VehicleTypeRepository: Fetch vehicle type from input
-ExitVehicleCommandInterpreter -> Vehicle: Creates vehicle accordingly from input
-ExitVehicleCommandInterpreter -> ApplicationContext: Gets parking space
-ExitVehicleCommandInterpreter -> ParkingSpace: Creates ExitVehicleCommand with success and failure handlers
+ExitVehicleCommandInterpreter -> VehicleTypeRepository: fetches vehicle type given input
+ExitVehicleCommandInterpreter -> Vehicle: creates vehicle given input
+ExitVehicleCommandInterpreter -> ApplicationContext: gets parking space
+ExitVehicleCommandInterpreter -> ExitVehicleCommand: creates ExitVehicleCommand with success and failure handlers
 ExitVehicleCommandInterpreter -> ExitVehicleCommand: execute
 ExitVehicleCommand --> user: Shows success message
 alt on failure
@@ -62,6 +62,6 @@ end
 
 ... DefaultInterpreter is invoked ...
 
-DefaultInterpreter --> user: Show default message
+DefaultInterpreter --> user: Shows default message
 
 @enduml
