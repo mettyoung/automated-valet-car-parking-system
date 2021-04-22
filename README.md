@@ -55,12 +55,46 @@ CarLot3 6
 ```
 
 ### Scope and Limitations
-- The parking system will not keep track of the revenue generated but only calculates the parking fee upon vehicle exiting.
+- The parking system will not keep track of the revenue generated but only calculates the parking fee upon vehicle exit.
 - Vehicle types are hardcoded and limited to only Car and Motorcycle with hourly rate of $2 and $1 respectively.
 
 ### Architecture
+By adopting [clean architecture](https://blog.ndepend.com/introduction-clean-architecture/), we achieve more flexibility. 
+We can think of it as a **ports and adapters architecture** where at the heart of the software lies the application core 
+which contains both our use cases and domain model. The application core exposes both input and output ports which can support 
+different adapters for different purposes.
+
+For example, we can plug both REST and MVC adapters to the application core to serve both types of applications. We can even
+also change the database vendor from SQL to NoSQL in order to scale easier. We can also improve our reads by denormalizing 
+our persistence entities as needed. All without impacting our application core because clean architecture enables us to write 
+loosely-coupled codebase.
+
+We'll begin with a high-level component diagram of our architecture.
+
 #### C3 - Component Level
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c3-component.puml)
+
+According to the diagram, both presentation and persistence layers point inward to the application core. 
+
+##### Persistence Layer
+Even though the natural flow of control between the application and persistence layer is towards the latter, 
+we can still invert the flow of dependency by **dependency inversion** using delegates. This is accomplished
+by defining an interface of the repositories in the domain layer and letting the persistence layer provide an
+implementation for it and injecting it to the IoC container.
+
+Since this is only a prototype application, I will only provide the **InMemoryVehicleTypeRepository** which hardcodes
+only cars and motorcycles as vehicles. 
+
+If you wish to add more vehicles, you can add them to the **InMemoryVehicleTypeRepository** and the application 
+will automatically support those.
+
+If vehicle types will be frequently updated, I suggest to implement **JpaVehicleTypeRepository**.
+By doing so, we can just modify the vehicle types in the database without recompiling the application. 
+
+*Caveat: The presentation layer is implemented with the assumption of **InMemoryVehicleTypeRepository**.*
+
+##### Presentation Layer
+
 
 #### C4 - Domain
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-domain.puml)
