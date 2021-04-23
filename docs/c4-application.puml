@@ -1,13 +1,13 @@
 @startuml
 class EnterVehicleCommand {
-    + constructor(ParkingSpace parkingSpace, Vehicle vehicle)
+    + constructor(ParkingSpace parkingSpace, Vehicle vehicle, Timestamp timestamp)
     + setOnSuccessHandler(Consumer<ParkingReservation> callback)
     + setOnFailureHandler(Consumer<Vehicle> callback)
     + execute()
 }
 
 class ExitVehicleCommand {
-    + constructor(ParkingSpace parkingSpace, Vehicle vehicle)
+    + constructor(ParkingSpace parkingSpace, Vehicle vehicle, Timestamp timestamp)
     + setOnSuccessHandler(Consumer<ParkingReceipt> callback)
     + setOnFailureHandler(Consumer<Vehicle> callback)
     + execute()
