@@ -21,8 +21,8 @@ class ParkingSpace {
     + accept(Vehicle vehicle, Timestamp timestamp): ParkingReservation|null
     + release(Vehicle vehicle, Timestamp timestamp): ParkingReceipt|null
     .. Comments ..
-    In order to dequeue the lowest available parking slot, we use min
-    heap to achieve O(log*n) for reserving a slot.
+    In order to dequeue the lowest available parking lot, we use min
+    heap to achieve O(log*n) for reserving a lot.
 
     Then we use hash table to get the available parking lots per vehicle
     at runtime of O(1). This still effectively gives us a runtime of O(log*n).
@@ -63,6 +63,7 @@ ParkingSpace -- VehicleLots: for initialization >
 ParkingSpace -- Vehicle: accepts/releases >
 ParkingSpace -- ParkingReservation: provides >
 ParkingReservation *-- ParkingLot
+ParkingReservation *-- Vehicle
 ParkingReceipt *-- ParkingReservation
 ParkingSpace -- ParkingReceipt: prints >
 
