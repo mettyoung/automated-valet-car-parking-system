@@ -16,6 +16,7 @@
         <groovy.version>3.0.8</groovy.version>
         <spock.version>2.0-M5-groovy-3.0</spock.version>
         <lombok.version>1.18.20</lombok.version>
+        <commons.version>3.12.0</commons.version>
     </properties>
 
     <build>
@@ -82,6 +83,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

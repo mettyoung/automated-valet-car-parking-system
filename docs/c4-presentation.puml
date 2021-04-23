@@ -3,8 +3,8 @@
 class ConsoleApplication
 
 interface Interpreter {
-    + supports(String line)
-    + interpret(String line)
+    + supports(String line): boolean
+    + interpret(String line): boolean
 }
 
 class ConsoleInputInterpreter {
@@ -12,15 +12,19 @@ class ConsoleInputInterpreter {
     + interpret(String line)
 }
 
-enum ApplicationContext {
-    + {static} INSTANCE: ApplicationContext
-    + register(Class type, Object bean)
-    + getBean(Class type): Object
+class InitCommandInterpreter {
+    - parkingSpace: ParkingSpace
+    - vehicleTypeRepository: VehicleTypeRepository
+}
+class EnterVehicleCommandInterpreter {
+    - parkingSpace: ParkingSpace
+    - vehicleTypeRepository: VehicleTypeRepository
 }
 
-class InitCommandInterpreter
-class EnterVehicleCommandInterpreter
-class ExitVehicleCommandInterpreter
+class ExitVehicleCommandInterpreter {
+    - parkingSpace: ParkingSpace
+}
+
 class DefaultInterpreter
 
 Interpreter <|-- InitCommandInterpreter
@@ -28,9 +32,6 @@ Interpreter <|-- EnterVehicleCommandInterpreter
 Interpreter <|-- ExitVehicleCommandInterpreter
 Interpreter <|-- DefaultInterpreter
 ConsoleInputInterpreter *-- Interpreter
-InitCommandInterpreter -- ApplicationContext: registers parking space >
-EnterVehicleCommandInterpreter -- ApplicationContext: gets parking space >
-ExitVehicleCommandInterpreter -- ApplicationContext: gets parking space >
 
 ConsoleApplication -- ConsoleInputInterpreter: uses >
 

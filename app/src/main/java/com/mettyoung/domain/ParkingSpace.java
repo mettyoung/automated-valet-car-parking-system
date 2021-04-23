@@ -63,7 +63,8 @@ public class ParkingSpace {
         }
 
         // Return the parking lot to the selected pool
-        var selectedVacantLots = vacantLots.get(vehicle.getVehicleType().getName());
+        var completeVehicle = parkingReservation.getVehicle();
+        var selectedVacantLots = vacantLots.get(completeVehicle.getVehicleType().getName());
         selectedVacantLots.add(parkingReservation.getParkingLot());
 
         // Generate parking receipt
@@ -71,7 +72,7 @@ public class ParkingSpace {
         var secondsSpent = ChronoUnit.SECONDS.between(entryDateTime, exitDateTime);
         var hoursSpent = BigDecimal.valueOf(Math.ceil(secondsSpent / 3600f));
 
-        var parkingFee = vehicle.getVehicleType().getHourlyParkingRate().multiply(hoursSpent);
+        var parkingFee = completeVehicle.getVehicleType().getHourlyParkingRate().multiply(hoursSpent);
         return new ParkingReceipt(exitDateTime, parkingReservation, parkingFee);
     }
 }
