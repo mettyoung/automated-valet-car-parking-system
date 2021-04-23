@@ -1,13 +1,13 @@
 Automated Valet Car Parking System
 ========================
-This application automates a car parking system which provides parking lot rentals for vehicles and manages its revenue.
+This application automates a car parking system that provides parking lot rentals for vehicles and manages its revenue.
 
 Each vehicle upon entry can only park in a lot available for that vehicle type. If there are no lots available for that
-vehicle type, it should be denied an entry into the space. 
+vehicle type, it should be denied entry into space. 
 
 All the lots are distinctly numbered (eg: CarLot1, CarLot2,...,MotorcycleLot1, MotorcycleLot2,...).
 
-Each vehicle upon entering is alloted to the lot with the lowest number for that vehicle type (eg: a car entering a
+Each vehicle upon entering is allocated to the lot with the lowest number for that vehicle type (eg: a car entering a
 parking space with the available lots CarLot2, CarLot4, CarLot5 would be assigned to CarLot2).
 
 When a vehicle wants to exit the car park, the system will release the parking lot which the vehicle rented and charge 
@@ -29,7 +29,7 @@ Enter car SSD9281L 1613549740
 Exit SDW2111W 1613559745
 ```
 
-The first two lines initializes a parking space with the indicated number of parking slots for the particular vehicle type.
+The first two lines initialize a parking space with the indicated number of parking slots for the particular vehicle type.
 
 For each subsequent line, there would be two types of events:
 
@@ -42,7 +42,7 @@ the program should also return the name of the lot being occupied by it.
 
 The program prints out the released lot and the parking fee.
 
-Given the example above, the program output would look like:
+Given the example above, the program output would look like this:
 
 ```
 Allocated 3 lots for Motorcycle
@@ -58,7 +58,7 @@ CarLot3 released at 2021-02-17T19:02:25: $6.00 charged for $2.00/hour
 
 ### Scope and Limitations
 - The parking system will not keep track of the revenue generated but only calculates the parking fee upon vehicle exit.
-- Vehicle types are hardcoded and limited to only Car and Motorcycle with hourly rate of $2 and $1 respectively.
+- Vehicle types are hardcoded and limited to only Car and Motorcycle with an hourly rate of $2 and $1 respectively.
 
 ### How to run the application (Ubuntu 16.04)
 Execute the following in your terminal:
@@ -83,10 +83,10 @@ We can think of it as a **ports and adapters architecture** where at the heart o
 which contains both our use cases and domain model. The application core exposes both input and output ports which can support 
 different adapters for different purposes.
 
-For example, we can plug both REST and MVC adapters to the application core to serve both types of applications. We can even
+For example, we can plug both REST and MVC adapters into the application core to serve both types of applications. We can even
 change the database vendor from SQL to NoSQL in order to scale easier. We can also improve our reads by denormalizing 
 our persistence entities as needed. All without impacting our application core because clean architecture enables us to write 
-loosely-coupled codebase.
+loosely coupled codebase.
 
 Now, let's begin with a high-level component diagram of our architecture.
 
@@ -98,7 +98,7 @@ According to the diagram, both presentation and persistence layers point inward 
 Even though the natural flow of control between the application and persistence layer is towards the latter, 
 we can still invert the flow of dependency by **dependency inversion** using delegates. This is accomplished
 by defining an interface of the repository in the domain layer and letting the persistence layer provide an
-implementation for it and injecting it to the IoC container.
+implementation for it and injecting it into the IoC container.
 
 Since this is only a prototype application, I will only provide the **InMemoryVehicleTypeRepository** which hardcodes
 vehicles limited to cars and motorcycles. 
@@ -106,13 +106,13 @@ vehicles limited to cars and motorcycles.
 If you wish to add more vehicles, you can add them to the **InMemoryVehicleTypeRepository** at compile-time and 
 the application will automatically support those.
 
-If vehicle types will be frequently updated, I suggest to implement **JpaVehicleTypeRepository**.
+If vehicle types will be frequently updated, I suggest implementing **JpaVehicleTypeRepository**.
 By doing so, we can just modify the vehicle types in the database without recompiling the application. 
 
 #### C4 - Domain
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-domain.puml)
 
-This layer defines the business logic for the parking system using object-oriented approach. 
+This layer defines the business logic for the parking system using an object-oriented approach. 
 
 *ParkingSpace* accepts *VehicleLots* to dynamically allocate parking lots per vehicle type. *VehicleTypeRepository* 
 enables adding more vehicle types without modifying the domain model.
@@ -162,4 +162,4 @@ I have also listed the tech stack I've used in this project.
 ### Copyright
 Copyright © 2021, Emmett Young, All rights reserved.
 
-No reproduction and usage are allowed in whole or in part for distribution, personal and commercial purposes.
+No reproduction and usage is allowed in whole or in part for distribution, personal and commercial purposes.
