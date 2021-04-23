@@ -60,7 +60,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mettyoung.App</mainClass>
+                            <mainClass>com.mettyoung.presentation.ConsoleApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
