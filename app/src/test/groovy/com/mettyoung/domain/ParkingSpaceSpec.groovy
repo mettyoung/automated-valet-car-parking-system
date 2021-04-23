@@ -170,19 +170,51 @@ class ParkingSpaceSpec extends Specification {
         parkingSpace.vacantLots[MOTORCYCLE_TYPE_NAME].stream().filter(parkingLot -> parkingLot.name == "MotorcycleLot1").any()
     }
 
-    def "should throw an error if vehicle is not found when releasing"() {
+    def "should print no receipt if vehicle is not found when releasing"() {
         given:
         def parkingSpace = new ParkingSpace()
         parkingSpace.allocate(new VehicleLots(CAR_TYPE, 10))
 
         when:
         def car = new Vehicle(CAR_TYPE, "STR1234")
-        parkingSpace.release(car, LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0, 1)))
+        def parkingReceipt = parkingSpace.release(car, LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0, 1)))
 
         then:
-        def exception = thrown(VehicleNotFoundException)
-        exception.vehicle.vehicleType == CAR_TYPE
-        exception.vehicle.plateNumber == "STR1234"
+        parkingReceipt == null
+    }
+    //endregion
+
+    //region Complex Scenarios
+    def "should reserve the lowest available lot"() {
+        given:
+        def parkingSpace = new ParkingSpace()
+        parkingSpace.allocate(new VehicleLots(CAR_TYPE, 10))
+
+        def cars = [
+                new Vehicle(CAR_TYPE, "STR1234"),
+                new Vehicle(CAR_TYPE, "STR1235"),
+                new Vehicle(CAR_TYPE, "STR1236"),
+                new Vehicle(CAR_TYPE, "STR1237")
+        ]
+
+        parkingSpace.accept(cars[0], LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0)))
+        parkingSpace.accept(cars[1], LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0)))
+        parkingSpace.accept(cars[2], LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0)))
+        parkingSpace.accept(cars[3], LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0)))
+        parkingSpace.release(cars[3], LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 1)))
+        parkingSpace.release(cars[1], LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 4)))
+
+        when:
+        def newReservation = parkingSpace.accept(cars[1], LocalDateTime.of(LOCAL_DATE, LocalTime.of(15, 0)))
+
+        then:
+        parkingSpace.vacantLots[CAR_TYPE_NAME].size == 7
+        with(newReservation) {
+            entryDateTime == LocalDateTime.of(LOCAL_DATE, LocalTime.of(15, 0))
+            parkingLot.name == "CarLot2"
+            vehicle.plateNumber == "STR1235"
+            vehicle.vehicleType == CAR_TYPE
+        }
     }
     //endregion
 }
