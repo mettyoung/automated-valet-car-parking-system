@@ -1,6 +1,8 @@
 package com.mettyoung.domain;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,7 @@ public class ParkingSpace {
         vacantLots.put(vehicleLots.getVehicleType().getName(), allocatedLots);
     }
 
-    public ParkingReservation accept(Vehicle vehicle, LocalDateTime timestamp) {
+    public ParkingReservation accept(Vehicle vehicle, LocalDateTime entryDateTime) {
         var vehicleVacantLots = vacantLots.get(vehicle.getVehicleType().getName());
         if (vehicleVacantLots == null) {
             throw new InvalidVehicleException(vehicle);
@@ -33,12 +35,32 @@ public class ParkingSpace {
         }
 
         var reservedLot = vehicleVacantLots.remove(0);
-        var parkingReservation =  new ParkingReservation(timestamp, reservedLot, vehicle);
+        var parkingReservation =  new ParkingReservation(entryDateTime, reservedLot, vehicle);
         if (reservations.containsKey(vehicle.getPlateNumber())) {
             throw new DuplicateVehicleException(vehicle);
         }
         reservations.put(vehicle.getPlateNumber(), parkingReservation);
 
         return parkingReservation;
+    }
+
+    public ParkingReceipt release(Vehicle vehicle, LocalDateTime exitDateTime) {
+        // Remove reservation
+        ParkingReservation parkingReservation = reservations.remove(vehicle.getPlateNumber());
+        if (parkingReservation == null) {
+            throw new VehicleNotFoundException(vehicle);
+        }
+
+        // Return the parking lot to the selected pool
+        var selectedVacantLots = vacantLots.get(vehicle.getVehicleType().getName());
+        selectedVacantLots.add(parkingReservation.getParkingLot());
+
+        // Generate parking receipt
+        var entryDateTime = parkingReservation.getEntryDateTime();
+        var secondsSpent = ChronoUnit.SECONDS.between(entryDateTime, exitDateTime);
+        var hoursSpent = BigDecimal.valueOf(Math.ceil(secondsSpent / 3600f));
+
+        var parkingFee = vehicle.getVehicleType().getHourlyParkingRate().multiply(hoursSpent);
+        return new ParkingReceipt(exitDateTime, parkingReservation, parkingFee);
     }
 }

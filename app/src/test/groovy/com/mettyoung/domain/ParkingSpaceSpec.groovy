@@ -18,6 +18,7 @@ class ParkingSpaceSpec extends Specification {
 
     final LOCAL_DATE = LocalDate.of(2021, 4, 23)
 
+    //region Allocate Parking Lots
     def "should be able to allocate parking lots given car and motorcycle lots"() {
         given:
         def carLots = new VehicleLots(CAR_TYPE, 10)
@@ -39,7 +40,9 @@ class ParkingSpaceSpec extends Specification {
             }
         }
     }
+    //endregion
 
+    //region Accept Vehicle
     def "should be able to accept car and motorcycle if slots are available"() {
         given:
         def parkingSpace = new ParkingSpace()
@@ -130,4 +133,56 @@ class ParkingSpaceSpec extends Specification {
         exception.vehicle.vehicleType == MOTORCYCLE_TYPE
         exception.vehicle.plateNumber == "STR1234"
     }
+    //endregion
+
+    //region Release Vehicle
+    def "should be able to release car and motorcycle if vehicles are found"() {
+        given:
+        def parkingSpace = new ParkingSpace()
+        parkingSpace.allocate(new VehicleLots(CAR_TYPE, 10))
+        parkingSpace.allocate(new VehicleLots(MOTORCYCLE_TYPE, 10))
+
+        def car = new Vehicle(CAR_TYPE, "STR1234")
+        def motorcycle = new Vehicle(MOTORCYCLE_TYPE, "STR1235")
+
+        def carReservation = parkingSpace.accept(car, LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0)))
+        def motorcycleReservation = parkingSpace.accept(motorcycle, LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0)))
+
+        when:
+        def carReceipt = parkingSpace.release(car, LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0, 1)))
+        def motorcycleReceipt = parkingSpace.release(motorcycle, LocalDateTime.of(LOCAL_DATE, LocalTime.of(15, 0, 1)))
+
+        then:
+        with(carReceipt) {
+            parkingFee == 1 * CAR_HOURLY_RATE
+            exitDateTime == LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0, 1))
+            parkingReservation == carReservation
+        }
+        parkingSpace.vacantLots[CAR_TYPE_NAME].size == 10
+        parkingSpace.vacantLots[CAR_TYPE_NAME].stream().filter(parkingLot -> parkingLot.name == "CarLot1").any()
+
+        with(motorcycleReceipt) {
+            parkingFee == 2 * MOTORCYCLE_HOURLY_RATE
+            exitDateTime == LocalDateTime.of(LOCAL_DATE, LocalTime.of(15, 0, 1))
+            parkingReservation == motorcycleReservation
+        }
+        parkingSpace.vacantLots[MOTORCYCLE_TYPE_NAME].size == 10
+        parkingSpace.vacantLots[MOTORCYCLE_TYPE_NAME].stream().filter(parkingLot -> parkingLot.name == "MotorcycleLot1").any()
+    }
+
+    def "should throw an error if vehicle is not found when releasing"() {
+        given:
+        def parkingSpace = new ParkingSpace()
+        parkingSpace.allocate(new VehicleLots(CAR_TYPE, 10))
+
+        when:
+        def car = new Vehicle(CAR_TYPE, "STR1234")
+        parkingSpace.release(car, LocalDateTime.of(LOCAL_DATE, LocalTime.of(14, 0, 1)))
+
+        then:
+        def exception = thrown(VehicleNotFoundException)
+        exception.vehicle.vehicleType == CAR_TYPE
+        exception.vehicle.plateNumber == "STR1234"
+    }
+    //endregion
 }
