@@ -1,5 +1,5 @@
 .idea/
-.mvn/
 target/
 *.iml
 .vagrant
+*.log

@@ -1,11 +1,11 @@
 Automated Valet Car Parking System
 ========================
-This application automates a car parking system which provides park rentals for vehicles and manages its revenue.
+This application automates a car parking system which provides parking lot rentals for vehicles and manages its revenue.
 
 Each vehicle upon entry can only park in a lot available for that vehicle type. If there are no lots available for that
 vehicle type, it should be denied an entry into the space. 
 
-All of the lots are distinctly numbered (eg: CarLot1, CarLot2,...,MotorcycleLot1, MotorcycleLot2,...).
+All the lots are distinctly numbered (eg: CarLot1, CarLot2,...,MotorcycleLot1, MotorcycleLot2,...).
 
 Each vehicle upon entering is alloted to the lot with the lowest number for that vehicle type (eg: a car entering a
 parking space with the available lots CarLot2, CarLot4, CarLot5 would be assigned to CarLot2).
@@ -22,7 +22,7 @@ Init motorcycle 3
 Init car 4
 Enter motorcycle SGX1234A 1613541902 
 Enter car SGF9283P 1613541902
-Exit SGX1234A ​1613545602
+Exit SGX1234A 1613545602
 Enter car SGP2937F 1613546029
 Enter car SDW2111W 1613549730
 Enter car SSD9281L 1613549740
@@ -45,18 +45,37 @@ The program prints out the released lot and the parking fee.
 Given the example above, the program output would look like:
 
 ```
-Accept MotorcycleLot1 
-Accept CarLot1 
-MotorcycleLot1 2 
-Accept CarLot2 
-Accept CarLot3 
-Reject
-CarLot3 6
+Allocated 3 lots for Motorcycle
+Allocated 4 lots for Car
+Accepted at 2021-02-17T14:05:02: MotorcycleLot1
+Accepted at 2021-02-17T14:05:02: CarLot1
+MotorcycleLot1 released at 2021-02-17T15:06:42: $2.00 charged for $1.00/hour
+Accepted at 2021-02-17T15:13:49: CarLot2
+Accepted at 2021-02-17T16:15:30: CarLot3
+Accepted at 2021-02-17T16:15:40: CarLot4
+CarLot3 released at 2021-02-17T19:02:25: $6.00 charged for $2.00/hour
 ```
 
 ### Scope and Limitations
 - The parking system will not keep track of the revenue generated but only calculates the parking fee upon vehicle exit.
 - Vehicle types are hardcoded and limited to only Car and Motorcycle with hourly rate of $2 and $1 respectively.
+
+### How to run the application (Ubuntu 16.04)
+Execute the following in your terminal:
+```
+sudo apt-get install -y zip
+cd
+wget https://github.com/mettyoung/automated-valet-car-parking-system/archive/refs/heads/master.zip
+unzip master.zip
+cp automated-valet-car-parking-system-master/app/install-jdk11.sh install-jdk11.sh
+./install-jdk11.sh
+source ~/.bashrc
+java -version
+cd automated-valet-car-parking-system-master/app
+./mvnw clean package
+cd target
+java -jar automated-valet-car-parking-system.jar ../src/main/resources/input-sample.txt
+```
 
 ### Architecture
 By adopting [clean architecture](https://blog.ndepend.com/introduction-clean-architecture/), we achieve higher flexibility. 
@@ -129,43 +148,16 @@ and [Singleton](https://refactoring.guru/design-patterns/singleton) patterns.
 #### Time Sequence Diagram
 ![](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/mettyoung/automated-valet-car-parking-system/master/docs/c4-sequence.puml)
 
-### Deployment Instructions
-Please refer to the [deployment guide](https://github.com/mettyoung/railway-routing-service/blob/master/devops/deployment_guide.md)
-for further instructions.
-
 ### The Journey
+I opted for a test-driven development approach for the domain layer. Since the presentation and persistence adapters are
+just prototypal implementation, I opted out writing tests for them as I do not see the need.
 
-The architecture is still similar to the [other project](https://github.com/mettyoung/shop-management) which follows 
-the vertical slices as presented [here](http://olivergierke.de/2013/01/whoops-where-did-my-architecture-go/) by Oliver 
-Gierke, the Spring Data Project Lead at Pivotal.
+I have also listed the tech stack I've used in this project.
 
-Since this project involves more domain logic, I opted for a test-driven development approach for the entire domain 
-model. It especially helped me to come up with a decent path finding algorithm as I come up with different test 
-scenarios.
-
-Furthermore, I have listed all the technologies that I've used in this project.
-
-#### Back-end Technologies
-
+#### Tech Stack
 1. Java
-2. JUnit4
-3. Hamcrest
-4. Spring Boot
-5. Spring Boot Test
-6. REST
-7. Bean Validation 2.0 (JSR-380)
-
-#### Front-end Technologies
-1. HTML5
-2. CSS3
-3. ReactJS
-4. React Bootstrap
-
-#### Dev-ops Technologies
-1. Git
-2. Gradle
-3. Docker
-4. Ansible
+2. Maven
+3. Spock Framework
 
 ### Copyright
 Copyright © 2021, Emmett Young, All rights reserved.
